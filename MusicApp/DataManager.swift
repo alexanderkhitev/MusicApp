@@ -29,17 +29,20 @@ public class DataManager {
         Alamofire.request(.GET, url).responseJSON { (response) -> Void in
             if response.result.isSuccess {
                 if let songArray = response.result.value as? [[String : AnyObject]] {
-                    Sync.changes(songArray, inEntityNamed: "SongEntity", dataStack: self.dataStack, completion: { (error) -> Void in
-                        self.delegate?.dataManagerDidLoad?()
-                        if error != nil {
-                            print(error?.localizedDescription)
-                        }
-                    })
+                    self.save(songArray)
                 }
             } else {
                 self.delegate?.dataManagerDidLoad?()
             }
         }
-
+    }
+    
+    private func save(data: [[String : AnyObject]]) {
+        Sync.changes(data, inEntityNamed: "SongEntity", dataStack: self.dataStack, completion: { (error) -> Void in
+            self.delegate?.dataManagerDidLoad?()
+            if error != nil {
+                print(error?.localizedDescription)
+            }
+        })
     }
 }
